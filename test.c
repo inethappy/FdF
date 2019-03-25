@@ -28,9 +28,21 @@ void	ft_lstadd_end(t_list **alst, t_list *new)
 	new->next = NULL;
 }
 
-t_str *new_coord(t_fdf *read)
+void new_coord(t_fdf *read, char *content)
 {
+	t_str *string;
+	char **xy;
+	// string = (t_str*)malloc(sizeof(t_str) * read->count_y);
+	int i = 0;
 
+	xy = ft_strsplit(content, ' ');
+	while (i < 10)
+	{
+		printf("%s\n", xy[i]);
+		i++;
+	}
+
+	// return (string);
 }
 
 void read_map(t_fdf *read)
@@ -48,7 +60,8 @@ void read_map(t_fdf *read)
 	i = 0;
 	while (i++ <= read->count_y)
 	{
-		read->map[i] = new_coord(read);
+		new_coord(read, read->first->content);
+		read->first = read->first->next;
 
 	}
 	// while (read->first != NULL)
