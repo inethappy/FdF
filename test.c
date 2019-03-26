@@ -28,21 +28,50 @@ void	ft_lstadd_end(t_list **alst, t_list *new)
 	new->next = NULL;
 }
 
-void new_coord(t_fdf *read, char *content)
+t_list	*ft_lstnew_new(char *content, size_t content_size)
+{
+	t_list *new;
+
+	if (!(new = (t_list*)malloc(sizeof(t_list))))
+		return (NULL);
+	if (content == NULL)
+	{
+		new->content = NULL;
+		new->content_size = 0;
+	}
+	else
+	{
+		new->content_size = content_size;
+		if (!(new->content = ft_strdup(content)))
+		{
+			free(new);
+			return (NULL);
+		}
+	}
+	new->next = NULL;
+	return (new);
+}
+
+t_str *new_coord(t_fdf *read, char *content, int y)
 {
 	t_str *string;
 	char **xy;
-	// string = (t_str*)malloc(sizeof(t_str) * read->count_y);
+	string = (t_str*)malloc(sizeof(t_str) * read->count_x);
 	int i = 0;
 
 	xy = ft_strsplit(content, ' ');
-	while (i < 10)
+	while (i < read->count_x)
 	{
-		printf("%s\n", xy[i]);
+		// printf("%s ", xy[i]);
+		string[i].x = i;
+		string[i].y = y;
+		string[i].z = ft_atoi(xy[i]);
+		// printf("%d,%d,%d ", string[i].x, string[i].y, string[i].z);
 		i++;
 	}
-
-	// return (string);
+	// printf("\n");
+	ft_strdel(xy);
+	return (string);
 }
 
 void read_map(t_fdf *read)
@@ -53,16 +82,20 @@ void read_map(t_fdf *read)
 
 	read->count_y = 0;
 	get_next_line(read->fd, &l);
-	read->first = ft_lstnew(l, ft_strlen(l));
+	read->first = ft_lstnew_new(l, ft_strlen(l));
 	list_ptr = read->first;
 	while (++read->count_y && get_next_line(read->fd, &l))
-		ft_lstadd_end(&list_ptr, ft_lstnew(l, ft_strlen(l)));
+		ft_lstadd_end(&list_ptr, ft_lstnew_new(l, ft_strlen(l)));
 	i = 0;
-	while (i++ <= read->count_y)
+	// ft_printf("%d\n", ft_words_counter(read->first->content, ' '));
+	read->count_x = ft_words_counter(read->first->content, ' ');
+	// ft_printf("read->count_y = %d\n", read->count_y);
+	read->map = (t_str**)malloc(sizeof(t_str*) * read->count_y);
+	while (read->first != NULL)//i < read->count_y)
 	{
-		new_coord(read, read->first->content);
+		read->map[i] = new_coord(read, read->first->content, i);
 		read->first = read->first->next;
-
+		i++;
 	}
 	// while (read->first != NULL)
 	// {

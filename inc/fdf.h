@@ -27,13 +27,13 @@ typedef struct s_str
 	int x;
 	int y;
 	int z;
-	// struct s_str *next;
 }				t_str;
 
 typedef	struct s_fdf
 {
 	int fd;
 	int count_y;
+	int count_x;
 	t_list *first;
 	t_str **map;
 }				t_fdf;
