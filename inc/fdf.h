@@ -21,13 +21,28 @@
 # include <mlx.h>
 # include <fcntl.h>
 # define ABS(Value) (((Value) < 0) ? -(Value) : (Value))
+# define WIDTH 500
+# define HEIGHT 500
 
 typedef struct s_str
 {
 	int x;
 	int y;
 	int z;
+	int clr;
 }				t_str;
+
+typedef	struct s_mllib
+{
+	void *mlx_ptr;
+	void *win_ptr;
+	void *img_ptr;
+	void *param;
+	char *addr;
+	int bbp;
+	int sl;
+	int end;
+}				t_mllib;
 
 typedef	struct s_fdf
 {
@@ -36,6 +51,7 @@ typedef	struct s_fdf
 	int count_x;
 	t_list *first;
 	t_str **map;
+	// t_mllib *mlx;
 }				t_fdf;
 
 
