@@ -19,10 +19,12 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <mlx.h>
+# include <math.h>
 # include <fcntl.h>
 # define ABS(Value) (((Value) < 0) ? -(Value) : (Value))
-# define WIDTH 500
-# define HEIGHT 500
+# define WIDTH 1000
+# define HEIGHT 1000
+# define SGN ((a) < 0) ? -1 : 1);
 
 typedef struct s_str
 {

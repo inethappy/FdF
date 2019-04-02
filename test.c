@@ -1,4 +1,3 @@
-# include <mlx.h>
 #include "fdf.h"
 
 // gcc -I /usr/local/include test.c -L /usr/local/lib/ -lmlx -framework OpenGL -framework AppKit
@@ -86,6 +85,8 @@ int check_str(char* str)
 t_str *new_coord(t_fdf *read, char *content, int y)
 {
 	t_str *string;
+	int mt;
+	mt = (read->count_x > read->count_y) ? ((WIDTH / read->count_x) / 2) : ((HEIGHT / read->count_y) / 2);
 	char **xy;
 	string = ft_memalloc(sizeof(t_str) * read->count_x);
 	int i = 0;
@@ -96,7 +97,9 @@ t_str *new_coord(t_fdf *read, char *content, int y)
 	{
 		string[i].x = i;
 		string[i].y = y;
-		string[i].z = ft_atoi(xy[i]);
+		string[i].x = (string[i].x - (read->count_x / 2)) * mt;
+		string[i].y = (string[i].y - (read->count_y / 2)) * mt;;
+		string[i].z = ft_atoi(xy[i]) * (mt / 2);
 		if (ft_strrchr(xy[i], 'x'))
 			string[i].clr = ft_atoi_base(xy[i], 16);
 		// ft_printf("%d,%d,%d,%#x ", string[i].x, string[i].y, string[i].z, string[i].clr);
@@ -122,9 +125,7 @@ void save_map(t_fdf *read)
 	while (++read->count_y && get_next_line(read->fd, &l))
 		ft_lstadd_end(&list_ptr, ft_lstnew_new(l, ft_strlen(l)));
 	i = -1;
-	// ft_printf("%d\n", ft_words_counter(read->first->content, ' '));
 	read->count_x = ft_words_counter(read->first->content, ' ');
-	// ft_printf("read->count_y = %d\n", read->count_y);
 	read->map = ft_memalloc(sizeof(t_str*) * read->count_y);
 	while (++i < read->count_y)
 	{
@@ -132,25 +133,103 @@ void save_map(t_fdf *read)
 			p_error("Bad map!");
 		read->first = read->first->next;
 	}
-
-	// while (read->first != NULL)
-	// {
-	// 	ft_printf("%s\n", read->first->content);
-	// 	read->first = read->first->next;
-	// }
-	// ft_printf("%d\n", read->count_y);
 }
 
 void put_pixel(t_mllib *mlx, int x, int y)
 {
-	int *b;
-	b = (int*)mlx->addr;
-	int i = 0;
+	char *b;
+	x += WIDTH / 2;
+	y += HEIGHT / 2;
+	b = (char*)mlx->addr;
+	int i = y * mlx->sl + x * mlx->bbp / 8;
 
-	while (i< 100)
+	if (x >= 0 && x < WIDTH && y < HEIGHT && y >= 0)
 	{
-		b[i*y + x] = 0xFFFFFF;
-		i += 1;
+		b[i] = 0xFF;
+		b[++i] = 0xFF;
+		b[++i] = 0xFF;
+	}
+}
+
+void iso(t_fdf *read)
+{
+	int pre_x;
+	int pre_y;
+	int i = -1;
+	int j = -1;
+
+	while (++i < read->count_y)
+	{
+		while (++j < read->count_x)
+		{
+			pre_x = read->map[i][j].x;
+			pre_y = read->map[i][j].y;
+			read->map[i][j].x = (pre_x - pre_y) * cos(0.523599);
+			read->map[i][j].y = -read->map[i][j].z + (pre_x + pre_y) * sin(0.523599);
+		}
+		j = -1;
+	}
+
+}
+
+void put_lines(t_mllib *mlx, t_fdf *read)
+{
+	int deltax;
+	int deltay;
+	int signx;
+	int signy;
+	int i = -1;
+	int j = -1;
+	int err;
+	int deltaerr;
+	int x1;
+	int y1;
+	int x2;
+	int y2;
+	int x3;
+	int y3;
+
+	// iso(read);
+
+
+	while (++i < read->count_y)
+	{
+		while (++j < read->count_x)
+		{
+			put_pixel(mlx, read->map[i][j].x, read->map[i][j].y);
+			if (i + 1 < read->count_y && j + 1 < read->count_x)
+			{
+			x1 = read->map[i][j].x;
+			x2 = read->map[i][j + 1].x;
+			y1 = read->map[i][j].y;
+			y2 = read->map[i + 1][j].y;
+			printf("tut %d %d | %d %d\n", i, j, read->count_y, read->count_x);
+				printf("in\n");
+			while (x1 != x2 || y1 != y2)
+			{
+				put_pixel(mlx, x1, y2);
+				put_pixel(mlx, x2, y1);
+				deltax = ABS(x2 - x1);
+				deltay = ABS(y2 - y1);
+				signx = x1 < x2 ? 1 : -1;
+				signy = y1 < y2 ? 1 : -1;
+				err = deltax - deltay;
+				deltaerr = err * 2;
+				if (deltaerr > -deltay)
+				{
+					err -= deltay;
+					x1 += signx;
+				}
+				if (deltaerr < deltax)
+				{
+					err += deltax;
+					y1 += signy;
+				}
+			}
+			}
+			printf("tut %d %d\n", i, j);
+		}
+		j = -1;
 	}
 }
 
@@ -165,12 +244,13 @@ void new_img(t_mllib *mlx, t_fdf *read)
 	mlx->addr = mlx_get_data_addr(mlx->img_ptr, &mlx->bbp, &mlx->sl, &mlx->end);
 	int i = -1;
 	int j = -1;
-	while (++i < read->count_y)
-	{
-		while (++j < read->count_x)
-			put_pixel(mlx, read->map[i][j].x, read->map[i][j].y);
-		j = -1;
-	}
+	// while (++i < read->count_y)
+	// {
+	// 	while (++j < read->count_x)
+	// 		put_pixel(mlx, read->map[i][j].x, read->map[i][j].y);
+	// 	j = -1;
+	// }
+	put_lines(mlx, read);
 	mlx_put_image_to_window(mlx->mlx_ptr, mlx->win_ptr, mlx->img_ptr, 0, 0);
 	mlx_loop(mlx->mlx_ptr);
 }
@@ -204,7 +284,7 @@ int main(int argc, char **argv)
 // 	// mlx_pixel_put(mlx_ptr, win_ptr, 250, 250, 0xFFFFFF);
 // 	mlx_key_hook(win_ptr, deal_key, (void *)0);
 // 	// mlx_mouse_hook(win_ptr, deal_mouse, (void *)0)
-// 	// mlx_string_put(mlx_ptr, win_ptr, 10, 10, 0x00FFFF, s);
+// 	// mlx_string_put(mlx_ptr, win_ptr, 10, 10, 0read->map[i][j - 1]0FFFF, s);
 // 	img_ptr = mlx_new_image(mlx_ptr, 100, 100);
 // 	mlx_put_image_to_window(mlx_ptr, win_ptr, img_ptr, 100, 100);
 // 	read->fd = open(argv[1], O_RDONLY);
