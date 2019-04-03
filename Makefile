@@ -6,7 +6,10 @@ SOURCES_DIR	:= ./src/
 OBJECTS_DIR	:= ./obj/
 INCLUDE_DIR	:= ./inc/
 LIB_DIR		:= ./lib/
-SOURCES		:= test.c
+SOURCES		:=	main.c \
+				save_input.c \
+				put_img.c \
+				diff_plans.c
 OBJECTS		:= $(addprefix $(OBJECTS_DIR), $(SOURCES:.c=.o))
 
 LIBFT		= $(LIBFT_DIR)libft.a
