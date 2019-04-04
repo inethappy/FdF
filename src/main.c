@@ -5,6 +5,8 @@
 int	p_error(char *s)
 {
 	ft_printf("%s\n", s);
+		system("leaks fdf > leaks");
+
 	exit(0);
 }
 
@@ -18,20 +20,39 @@ int red_cross(void *param)
 int deal_key(int key, t_mllib *mlx)
 {
 	if (key == 53)
+	{
+		system("leaks fdf > leaks");
 		exit(0);
+	}
 	if (key == 18)
 	{
+			mlx->read->zoom_in = 1;
+		mlx->read->zoom_out = 1;
 		mlx->read->fl = 0;
 		put_img(mlx, mlx->read);
 	}
 	if (key == 19)
 	{
+		mlx->read->zoom_in = 1;
+		mlx->read->zoom_out = 1;
 		mlx->read->fl = 1;
 		put_img(mlx, mlx->read);
 	}
 	if (key == 20)
 	{
+		mlx->read->zoom_in = 1;
+		mlx->read->zoom_out = 1;
 		mlx->read->fl = 2;
+		put_img(mlx, mlx->read);
+	}
+	if (key == 69 || key == 24)
+	{
+		mlx->read->zoom_in *= 2;
+		put_img(mlx, mlx->read);
+	}
+	if (key == 78 || key == 27)
+	{
+		mlx->read->zoom_out *= 2;
 		put_img(mlx, mlx->read);
 	}
 	return (0);
@@ -61,8 +82,19 @@ int ft_atoi_base(char *str, int base)
 	return (res);
 }
 
+void d_free(t_str **new)
+{
+	int i;
+
+	i = -1;
+	while (new[++i])
+		free(new[i]);
+	free(new);
+}
+
 void put_img(t_mllib *mlx, t_fdf *read)
 {
+	t_str **new;
 	if (read->fl_put == 1)
 	{
 		mlx_destroy_image(mlx->mlx_ptr, mlx->img_ptr);
@@ -70,11 +102,18 @@ void put_img(t_mllib *mlx, t_fdf *read)
 		mlx->addr = mlx_get_data_addr(mlx->img_ptr, &mlx->bbp, &mlx->sl, &mlx->end);
 	}
 	if (read->fl == 0)
-		put_lines(mlx, read, read->map);
+		new = usual(read);
+		// put_lines(mlx, read, usual(read));
 	else if (read->fl == 1)
-		put_lines(mlx, read, read->map_iso);
+		new = iso(read);
+		// put_lines(mlx, read, iso(read));
 	else if (read->fl == 2)
-		put_lines(mlx, read, read->map_per);
+		new = perspective(read);
+		// put_lines(mlx, read, perspective(read));
+	// else if (read->fl == 3)
+	// 	new =
+	put_lines(mlx, read, new);
+	d_free(new);
 	mlx_put_image_to_window(mlx->mlx_ptr, mlx->win_ptr, mlx->img_ptr, 0, 0);
 }
 
@@ -85,11 +124,10 @@ int main(int argc, char **argv)
 		return (p_error("Nothing turns in!"));
 	mlx = ft_memalloc(sizeof(t_mllib));
 	mlx->read = ft_memalloc(sizeof(t_fdf));
+	mlx->read->zoom_in = 1;
+	mlx->read->zoom_out = 1;
 	mlx->read->fd = open(argv[1], O_RDONLY);
 	save_map(mlx->read);
 	new_img(mlx, mlx->read);
-	mlx_hook(mlx->win_ptr, 2, 0, deal_key, mlx);
-	mlx_hook(mlx->win_ptr, 17, 0, red_cross, read);
-	put_img(mlx, mlx->read);
-	mlx_loop(mlx->mlx_ptr);
+	return (0);
 }

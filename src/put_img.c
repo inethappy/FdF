@@ -2,21 +2,13 @@
 
 void put_pixel(t_mllib *mlx, int x, int y, t_fdf *read)
 {
-	// int *b;
-	// x += WIDTH / 2;
-	// y += HEIGHT / 2;
-	// b = (int*)mlx->addr;
-	// int i = y * WIDTH + x;
-
-	// if (x >= 0 && x < WIDTH && y < HEIGHT && y >= 0)
-	// {
-	// 	b[i] = read->clr ? read->clr : 0xEA03F7;
-	// }
 	char *b;
+	int i;
+
 	x += WIDTH / 2;
 	y += HEIGHT / 2;
 	b = (char*)mlx->addr;
-	int i = y * mlx->sl + x * mlx->bbp / 8;
+	i = y * mlx->sl + x * mlx->bbp / 8;
 
 	if (x >= 0 && x < WIDTH && y < HEIGHT && y >= 0)
 	{
@@ -97,4 +89,8 @@ void new_img(t_mllib *mlx, t_fdf *read)
 	mlx->win_ptr = mlx_new_window(mlx->mlx_ptr, WIDTH, HEIGHT, "FdF");
 	mlx->img_ptr = mlx_new_image(mlx->mlx_ptr, WIDTH, HEIGHT);
 	mlx->addr = mlx_get_data_addr(mlx->img_ptr, &mlx->bbp, &mlx->sl, &mlx->end);
+	mlx_hook(mlx->win_ptr, 2, 0, deal_key, mlx);
+	mlx_hook(mlx->win_ptr, 17, 0, red_cross, read);
+	put_img(mlx, mlx->read);
+	mlx_loop(mlx->mlx_ptr);
 }
