@@ -9,7 +9,9 @@ LIB_DIR		:= ./lib/
 SOURCES		:=	main.c \
 				save_input.c \
 				put_img.c \
-				diff_plans.c
+				diff_plans.c \
+				deal_keys.c \
+				moving.c
 OBJECTS		:= $(addprefix $(OBJECTS_DIR), $(SOURCES:.c=.o))
 
 LIBFT		= $(LIBFT_DIR)libft.a

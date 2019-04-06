@@ -2,62 +2,6 @@
 
 // gcc -I /usr/local/include test.c -L /usr/local/lib/ -lmlx -framework OpenGL -framework AppKit
 
-int	p_error(char *s)
-{
-	ft_printf("%s\n", s);
-		system("leaks fdf > leaks");
-
-	exit(0);
-}
-
-int red_cross(void *param)
-{
-	(void)param;
-	exit(0);
-	return (0);
-}
-
-int deal_key(int key, t_mllib *mlx)
-{
-	if (key == 53)
-	{
-		system("leaks fdf > leaks");
-		exit(0);
-	}
-	if (key == 18)
-	{
-			mlx->read->zoom_in = 1;
-		mlx->read->zoom_out = 1;
-		mlx->read->fl = 0;
-		put_img(mlx, mlx->read);
-	}
-	if (key == 19)
-	{
-		mlx->read->zoom_in = 1;
-		mlx->read->zoom_out = 1;
-		mlx->read->fl = 1;
-		put_img(mlx, mlx->read);
-	}
-	if (key == 20)
-	{
-		mlx->read->zoom_in = 1;
-		mlx->read->zoom_out = 1;
-		mlx->read->fl = 2;
-		put_img(mlx, mlx->read);
-	}
-	if (key == 69 || key == 24)
-	{
-		mlx->read->zoom_in *= 2;
-		put_img(mlx, mlx->read);
-	}
-	if (key == 78 || key == 27)
-	{
-		mlx->read->zoom_out *= 2;
-		put_img(mlx, mlx->read);
-	}
-	return (0);
-}
-
 int ft_atoi_base(char *str, int base)
 {
 	int res;
@@ -82,16 +26,6 @@ int ft_atoi_base(char *str, int base)
 	return (res);
 }
 
-void d_free(t_str **new)
-{
-	int i;
-
-	i = -1;
-	while (new[++i])
-		free(new[i]);
-	free(new);
-}
-
 void put_img(t_mllib *mlx, t_fdf *read)
 {
 	t_str **new;
@@ -103,30 +37,61 @@ void put_img(t_mllib *mlx, t_fdf *read)
 	}
 	if (read->fl == 0)
 		new = usual(read);
-		// put_lines(mlx, read, usual(read));
 	else if (read->fl == 1)
 		new = iso(read);
-		// put_lines(mlx, read, iso(read));
 	else if (read->fl == 2)
 		new = perspective(read);
-		// put_lines(mlx, read, perspective(read));
-	// else if (read->fl == 3)
-	// 	new =
+	if (mlx->read->mv_x || mlx->read->mv_y)
+		move(new, read);
+	if (read->zoom_in > 1 || read->zoom_out > 1)
+		zoom(new, read);
 	put_lines(mlx, read, new);
-	d_free(new);
 	mlx_put_image_to_window(mlx->mlx_ptr, mlx->win_ptr, mlx->img_ptr, 0, 0);
+}
+
+void preparing(t_fdf *read)
+{
+	int i;
+
+	read->zoom_in = 1;
+	read->zoom_out = 1;
+	read->map = ft_memalloc(sizeof(t_str*) * read->count_y + 1);
+	read->map_us = ft_memalloc(sizeof(t_str*) * read->count_y + 1);
+	read->map_iso = ft_memalloc(sizeof(t_str*) * read->count_y + 1);
+	read->map_per = ft_memalloc(sizeof(t_str*) * read->count_y + 1);
+	i = -1;
+	while (++i < read->count_y)
+	{
+		read->map_us[i] = ft_memalloc(sizeof(t_str) * read->count_x);
+		read->map_iso[i] = ft_memalloc(sizeof(t_str) * read->count_x);
+		read->map_per[i] = ft_memalloc(sizeof(t_str) * read->count_x);
+	}
+	read->map_us[i] = NULL;
+	read->map_iso[i] = NULL;
+	read->map_per[i] = NULL;
 }
 
 int main(int argc, char **argv)
 {
+	char *l;
+
 	t_mllib *mlx;
 	if (argc != 2)
 		return (p_error("Nothing turns in!"));
 	mlx = ft_memalloc(sizeof(t_mllib));
 	mlx->read = ft_memalloc(sizeof(t_fdf));
-	mlx->read->zoom_in = 1;
-	mlx->read->zoom_out = 1;
-	mlx->read->fd = open(argv[1], O_RDONLY);
+	if ((mlx->read->fd = open(argv[1], O_RDONLY)) == -1)
+		return (p_error("Wrong name of file!"));
+	mlx->read->count_y = 0;
+	if (!(get_next_line(mlx->read->fd, &l)))
+		return (p_error("Empty map!"));
+	mlx->read->first = ft_lstnew(l, ft_strlen(l));
+	free(l);
+	while (++mlx->read->count_y && get_next_line(mlx->read->fd, &l))
+	{
+		ft_lstadd_end(mlx->read->first, ft_lstnew(l, ft_strlen(l)));
+		free(l);
+	}
 	save_map(mlx->read);
 	new_img(mlx, mlx->read);
 	return (0);
