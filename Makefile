@@ -1,3 +1,15 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: mkotytsk <marvin@42.fr>                    +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2019/04/08 12:39:39 by mkotytsk          #+#    #+#              #
+#    Updated: 2019/04/08 12:39:41 by mkotytsk         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME		:= fdf
 CC			:=	gcc
 CFLAGS		:=	-Wall -Wextra -Werror
@@ -11,7 +23,8 @@ SOURCES		:=	main.c \
 				put_img.c \
 				diff_plans.c \
 				deal_keys.c \
-				moving.c
+				moving.c \
+				brezenhame.c
 OBJECTS		:= $(addprefix $(OBJECTS_DIR), $(SOURCES:.c=.o))
 
 LIBFT		= $(LIBFT_DIR)libft.a

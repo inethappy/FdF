@@ -24,7 +24,6 @@ char	**ft_strsplit(char const *s, char c)
 	wd = ft_words_counter(s, c);
 	if (!(fresh = (char **)malloc(sizeof(char*) * wd + 1)))
 		return (NULL);
-	fresh[wd] = NULL;
 	i = 0;
 	while (s[i] == c && s[i] != '\0')
 		i++;
@@ -34,5 +33,6 @@ char	**ft_strsplit(char const *s, char c)
 		fresh[j] = ft_one_word(s, c, &i);
 		j++;
 	}
+	fresh[j] = NULL;
 	return (fresh);
 }

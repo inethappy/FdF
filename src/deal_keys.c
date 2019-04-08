@@ -1,30 +1,42 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   deal_keys.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mkotytsk <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/04/08 12:04:24 by mkotytsk          #+#    #+#             */
+/*   Updated: 2019/04/08 12:04:26 by mkotytsk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
-int	p_error(char *s)
+int		p_error(char *s)
 {
 	ft_printf("%s\n", s);
 	exit(0);
 }
 
-int red_cross(void *param)
+int		red_cross(void *param)
 {
 	(void)param;
 	exit(0);
 	return (0);
 }
 
-void freshing_flags(t_fdf *read)
+void	freshing_flags(t_fdf *read)
 {
-		read->mv_x = 0;
-		read->mv_y = 0;
-		read->zoom_in = 1;
-		read->zoom_out = 1;
-		read->turn_x = 0.0;
-		read->turn_y = 0.0;
-		read->turn_z = 0.0;
+	read->mv_x = 0;
+	read->mv_y = 0;
+	read->zoom_in = 1;
+	read->zoom_out = 1;
+	read->turn_x = 0.0;
+	read->turn_y = 0.0;
+	read->turn_z = 0.0;
 }
 
-void other_keys(int key, t_mllib *mlx)
+void	other_keys(int key, t_mllib *mlx)
 {
 	if (key == 123 || key == 124)
 	{
@@ -53,13 +65,10 @@ void other_keys(int key, t_mllib *mlx)
 	}
 }
 
-int deal_key(int key, t_mllib *mlx)
+int		deal_key(int key, t_mllib *mlx)
 {
 	if (key == 53)
-	{
-		system("leaks fdf > leaks");
 		exit(0);
-	}
 	if (key == 18)
 	{
 		freshing_flags(mlx->read);

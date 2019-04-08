@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   diff_plans.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mkotytsk <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/04/08 12:49:26 by mkotytsk          #+#    #+#             */
+/*   Updated: 2019/04/08 12:49:27 by mkotytsk         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "fdf.h"
 
-t_str **usual(t_fdf *read)
+t_str	**usual(t_fdf *read)
 {
 	int i;
 	int j;
@@ -21,7 +33,7 @@ t_str **usual(t_fdf *read)
 	return (read->map_us);
 }
 
-t_str **iso(t_fdf *read)
+t_str	**iso(t_fdf *read)
 {
 	int i;
 	int j;
@@ -34,27 +46,24 @@ t_str **iso(t_fdf *read)
 	{
 		while (++j < read->count_x)
 		{
-			read->map_iso[i][j].x = (((read->map[i][j].x - read->map[i][j].y) * cos(0.223599)) / mt);
-			read->map_iso[i][j].y = ((-read->map[i][j].z + (read->map[i][j].x + read->map[i][j].y) * sin(0.223599)) / mt);
+			read->map_iso[i][j].x = (((read->map[i][j].x - read->map[i][j].y)
+				* cos(0.223599)) / mt);
+			read->map_iso[i][j].y = ((-read->map[i][j].z
+				+ (read->map[i][j].x + read->map[i][j].y)
+				* sin(0.223599)) / mt);
 			read->map_iso[i][j].clr = read->map[i][j].clr;
-			if ((ABS(read->map_iso[i][j].x) > (WIDTH / 2) || ABS(read->map_iso[i][j].y) > (HEIGHT / 2)) && read->zoom_in == 1)
-			{
-				mt *= 2;
-				i = 0;
-				j = -1;
-			}
 		}
 		j = -1;
 	}
 	return (read->map_iso);
 }
 
-t_str **perspective(t_fdf *read)
+t_str	**perspective(t_fdf *read)
 {
-	int i;
-	int j;
-	double dst;
-	t_str **map_per;
+	int		i;
+	int		j;
+	double	dst;
+	t_str	**map_per;
 
 	dst = WIDTH / 1.5 * -1;
 	i = -1;
@@ -65,15 +74,11 @@ t_str **perspective(t_fdf *read)
 		{
 			if (read->map[i][j].z != dst)
 			{
-				read->map_per[i][j].x = read->map[i][j].x / (1 + read->map[i][j].z / dst);
-				read->map_per[i][j].y = read->map[i][j].y / (1 + read->map[i][j].z / dst);
+				read->map_per[i][j].x = read->map[i][j].x
+					/ (1 + read->map[i][j].z / dst);
+				read->map_per[i][j].y = read->map[i][j].y
+					/ (1 + read->map[i][j].z / dst);
 				read->map_per[i][j].clr = read->map[i][j].clr;
-				if ((ABS(read->map_per[i][j].x) > (WIDTH / 2) || ABS(read->map_per[i][j].y) > (HEIGHT / 2)) && read->zoom_in == 1)
-				{
-					dst /= 1.8;
-					i = 0;
-					j = -1;
-				}
 			}
 		}
 	}
