@@ -100,7 +100,7 @@ void			zoom_in(t_str **new, t_fdf *read);
 void			zoom_out(t_str **new, t_fdf *read);
 void			preparing(t_fdf *read);
 void			rotate(t_str **new, t_fdf *read);
-int				check_str(char *str, t_fdf *read);
+int				check_str(char *str);
 void			double_del(char **xy);
 
 #endif

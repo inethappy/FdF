@@ -43,7 +43,7 @@ FRAM = -L minilibx -I minilibx -lmlx -framework OpenGL -framework AppKit
 all:	$(NAME)
 
 $(NAME): $(LIBFT) $(OBJECTS)
-		$(CC) $(OBJECTS) $(LIB_FLAGS) -o $(NAME) $(FRAM)
+		$(CC) $(CFLAGS) $(OBJECTS) $(LIB_FLAGS) -o $(NAME) $(FRAM)
 
 $(OBJECTS): | $(OBJECTS_DIR)
 
@@ -51,7 +51,7 @@ $(OBJECTS_DIR):
 		mkdir $(OBJECTS_DIR)
 
 $(OBJECTS_DIR)%.o: %.c
-		$(CC)  -c $< -o $@ $(HEADER_FLAGS)
+		$(CC)  $(CFLAGS) -c $< -o $@ $(HEADER_FLAGS)
 
 $(LIBFT):
 		make -C $(LIBFT_DIR)

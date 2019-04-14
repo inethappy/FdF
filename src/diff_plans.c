@@ -63,7 +63,6 @@ t_str	**perspective(t_fdf *read)
 	int		i;
 	int		j;
 	double	dst;
-	t_str	**map_per;
 
 	dst = WIDTH / 1.5 * -1;
 	i = -1;

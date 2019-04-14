@@ -22,7 +22,7 @@ void	ft_lstadd_end(t_list *alst, t_list *new)
 	list_ptr->next = new;
 }
 
-int		check_str(char *str, t_fdf *read)
+int		check_str(char *str)
 {
 	int i;
 
@@ -37,7 +37,6 @@ int		check_str(char *str, t_fdf *read)
 int		check_xy(char *xy)
 {
 	int i;
-	int j;
 	int c;
 
 	i = -1;
@@ -67,10 +66,10 @@ t_str	*new_coord(t_fdf *read, char **xy, int y)
 		string[i].x = (i - (read->count_x / 2)) * read->mt;
 		string[i].y = (y - (read->count_y / 2)) * read->mt;
 		string[i].z = ft_atoi(xy[i]) * read->mt / 2;
-		if (ft_strrchr(xy[i], ','))
+		if (ft_strrchr(xy[i], 'x'))
 			string[i].clr = ft_atoi_base(ft_strrchr(xy[i], 'x') + 1, 16);
 		else
-			string[i].clr = string[i].z ? 0xFFbc33 : 0;
+			string[i].clr = (ft_atoi(xy[i]) == 0) ? 0 : 0xFFBC33;
 	}
 	if (i < read->count_x)
 		free(string);
@@ -90,7 +89,7 @@ void	save_map(t_fdf *read)
 	while (++i < read->count_y)
 	{
 		xy = ft_strsplit(read->first->content, ' ');
-		if (check_str(read->first->content, read))
+		if (check_str(read->first->content))
 			p_error("Bad map!");
 		read->map[i] = new_coord(read, xy, i);
 		double_del(xy);

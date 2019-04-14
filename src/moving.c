@@ -45,17 +45,17 @@ void	zoom_out(t_str **new, t_fdf *read)
 
 	i = -1;
 	j = -1;
-	if (ABS(new[0][1].x - new[0][0].x) < 1 || read->zoom_out > 10000)
+	if (ABS(new[0][1].x - new[0][0].x) < 50 || read->zoom_out > 10000)
 	{
 		read->zoom_out /= 2;
-		read->zoom_in /= 2;
+		read->zoom_in *= 2;
 	}
 	while (++i < read->count_y)
 	{
 		while (++j < read->count_x)
 		{
-			new[i][j].x = new[i][j].x / read->zoom_out;
-			new[i][j].y = new[i][j].y / read->zoom_out;
+			new[i][j].x /= (ABS(new[i][j].x) > 2147483647) ? 2 : read->zoom_out;
+			new[i][j].y /= (ABS(new[i][j].y) > 2147483647) ? 2 : read->zoom_out;
 		}
 		j = -1;
 	}
@@ -70,15 +70,15 @@ void	zoom_in(t_str **new, t_fdf *read)
 	j = -1;
 	if (ABS(new[0][1].x - new[0][0].x) > 300 || read->zoom_in > 10000)
 	{
-		read->zoom_out /= 2;
+		read->zoom_out *= 2;
 		read->zoom_in /= 2;
 	}
 	while (++i < read->count_y)
 	{
 		while (++j < read->count_x)
 		{
-			new[i][j].x = new[i][j].x * read->zoom_in;
-			new[i][j].y = new[i][j].y * read->zoom_in;
+			new[i][j].x *= (ABS(new[i][j].x) > 2147483647) ? 2 : read->zoom_in;
+			new[i][j].y *= (ABS(new[i][j].y) > 2147483647) ? 2 : read->zoom_in;
 		}
 		j = -1;
 	}

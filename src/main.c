@@ -40,6 +40,7 @@ void	put_img(t_mllib *mlx, t_fdf *read)
 {
 	t_str **new;
 
+	new = NULL;
 	if (read->fl_put == 1)
 	{
 		mlx_destroy_image(mlx->mlx_ptr, mlx->img_ptr);
@@ -109,6 +110,8 @@ int		main(int argc, char **argv)
 	if (!(get_next_line(mlx->read->fd, &l) && ++mlx->read->count_y))
 		return (p_error("Empty map!"));
 	mlx->read->first = ft_lstnew(l, ft_strlen(l));
+	if (l[0] == '\0')
+		return (p_error("Empty map!"));
 	free(l);
 	while (get_next_line(mlx->read->fd, &l) && ++mlx->read->count_y)
 	{
