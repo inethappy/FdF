@@ -4,3 +4,4 @@ switch projections: "1", "2", "3".
 zoom: "+" | "-".
 rotate (only in "1"): "8", "2", "4", "6" (Numeric keypad).
 move left-right: keyboard arrows.
+you can select other map in the folder "maps" or "test_maps"
